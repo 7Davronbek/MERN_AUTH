@@ -1,11 +1,12 @@
-// import mongoose from 'mongoose'
-// import express from 'express'
 const mongoose = require('mongoose')
 const express = require('express')
-// const dotenv = require('dotenv')
 require('dotenv').config()
+const router = require('./routes/user-routes')
 
 const app = express()
+
+
+app.use('/api', router)
 
 mongoose.connect(`mongodb+srv://mern_auth:${process.env.MONGO_PASSWORD}@cluster0.gn7dyr9.mongodb.net/mern_auth?retryWrites=true&w=majority`)
     .then(() => {
