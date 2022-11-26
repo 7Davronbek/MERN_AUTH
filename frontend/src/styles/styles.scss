@@ -47,4 +47,27 @@ body {
             padding: 0;
         }
     }
+
+    .myBtn {
+        border: 1px solid rebeccapurple;
+        color: rebeccapurple;
+        padding: 10px 30px;
+        font-size: 18px;
+        font-weight: 600;
+        margin-left: auto;
+        display: block;
+        margin-top: 40px;
+        transition: all .3s ease-in-out;
+
+        &:hover {
+            background-color: rebeccapurple;
+            color: #fff ;
+        }
+    }
+
+    .form-control {
+        border-color: rebeccapurple;
+        font-size: 17px;
+        box-shadow: 0 0 10px rgba(102, 51, 153, 0.616) !important;
+    }
 }

@@ -7,7 +7,12 @@ const Navbar = () => {
         <div className="container">
             <div className="row">
                 <div className="col-2">
-                    <Link to='/'><h3>Logo</h3></Link>
+                    <Link to='/'><h3>LOGO</h3></Link>
+                </div>
+                <div className="col-lg-6 ms-auto">
+                    <div className="d-flex align-items-center justify-content-end">
+                        <Link to='/sign-up'>Sign Up</Link>
+                    </div>
                 </div>
             </div>
         </div>

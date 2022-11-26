@@ -1,6 +1,7 @@
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Main from './pages/main/Main'
+import SignUp from './pages/sign-up/SignUp'
 
 const App = () => {
     return (
@@ -9,6 +10,7 @@ const App = () => {
                 <Navbar />
                 <Routes>
                     <Route path='/' element={<Main />} />
+                    <Route path='/sign-up' element={<SignUp />} />
                 </Routes>
             </HashRouter>
         </>
