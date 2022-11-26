@@ -11,7 +11,8 @@ const Navbar = () => {
                 </div>
                 <div className="col-lg-6 ms-auto">
                     <div className="d-flex align-items-center justify-content-end">
-                        <Link to='/sign-up'>Sign Up</Link>
+                        <Link className='me-4' to='/sign-up'>Sign Up</Link>
+                        <Link to='/login'>Login</Link>
                     </div>
                 </div>
             </div>
