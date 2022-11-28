@@ -1,7 +1,6 @@
 const User = require('../model/User')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const JWT_SECRET_KEY = "MyKey"
 
 // SIGN UP
 const signup = async (req, res, next) => {
@@ -61,9 +60,13 @@ const login = async (req, res, next) => {
         return res.status(400).json({ message: 'Invalid Email / Password' })
     }
 
-    const token = jwt.sign({ id: existingUser._id }, JWT_SECRET_KEY, {
-        expiresIn: '1hr'
+    const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET_KEY, {
+        expiresIn: '30s'
     })
+
+    if(req.cookies[`${existingUser._id}`]) {
+        req.cookies[`${existingUser._id}`] = ''
+    }
 
     res.cookie(String(existingUser._id), token, {
         path: '/',
@@ -86,7 +89,7 @@ const verifyToken = (req, res, next) => {
         return res.status(404).json({ message: 'Token not found' })
     }
 
-    jwt.verify(String(token), JWT_SECRET_KEY, (err, user) => {
+    jwt.verify(String(token), process.env.JWT_SECRET_KEY, (err, user) => {
         if (err) {
             return res.status(400).json({ message: 'Invalid token' })
         }
@@ -113,7 +116,40 @@ const getUser = async (req, res, next) => {
     return res.status(200).json({ user })
 }
 
+const refreshToken = (req, res, next) => {
+    const cookies = req.headers.cookie
+    const prevToken = cookies.split('=')[1]
+    if (!prevToken) {
+        return res.status(400).json({ message: "Coundn't find token" })
+    }
+    jwt.verify(String(prevToken), process.env.JWT_SECRET_KEY, (err, user) => {
+        if (err) {
+            console.log(err);
+            return res.status(403).json({ message: 'Authentication failed' })
+        }
+
+        res.clearCookie(`${user.id}`)
+        req.cookies[`${user.id}`] = ""
+
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET_KEY, {
+            expiresIn: '30s'
+        })
+
+        res.cookie(String(user.id), token, {
+            path: '/',
+            expires: new Date(Date.now() + 1000 * 30),
+            httpOnly: true,
+            sameSite: 'lax'
+        })
+
+        req.id = user.id
+        next()
+
+    })
+}
+
 exports.signup = signup
 exports.login = login
 exports.verifyToken = verifyToken
 exports.getUser = getUser
+exports.refreshToken = refreshToken
