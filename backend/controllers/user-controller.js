@@ -64,7 +64,7 @@ const login = async (req, res, next) => {
         expiresIn: '30s'
     })
 
-    if(req.cookies[`${existingUser._id}`]) {
+    if (req.cookies[`${existingUser._id}`]) {
         req.cookies[`${existingUser._id}`] = ''
     }
 
@@ -79,7 +79,8 @@ const login = async (req, res, next) => {
 
 }
 
-const verifyToken = (req, res, next) => {
+// VERIFY
+const verifyToken = async (req, res, next) => {
     const cookies = req.headers.cookie
     const token = cookies.split('=')[1]
     // const headers = req.headers[`authorization`]
@@ -98,6 +99,7 @@ const verifyToken = (req, res, next) => {
     next()
 }
 
+// GET USER
 const getUser = async (req, res, next) => {
 
     const userId = req.id
@@ -116,7 +118,8 @@ const getUser = async (req, res, next) => {
     return res.status(200).json({ user })
 }
 
-const refreshToken = (req, res, next) => {
+// REFRESH TOKEN
+const refreshToken = async (req, res, next) => {
     const cookies = req.headers.cookie
     const prevToken = cookies.split('=')[1]
     if (!prevToken) {
@@ -148,8 +151,30 @@ const refreshToken = (req, res, next) => {
     })
 }
 
+const logout = async (req, res, next) => {
+    const cookies = req.headers.cookie
+    const prevToken = cookies.split('=')[1]
+    if (!prevToken) {
+        return res.status(400).json({ message: "Coundn't find token" })
+    }
+
+    jwt.verify(String(prevToken), process.env.JWT_SECRET_KEY, (err, user) => {
+        if (err) {
+            console.log(err);
+            return res.status(403).json({ message: 'Authentication failed' })
+        }
+
+        res.clearCookie(`${user.id}`)
+        req.cookies[`${user.id}`] = ""
+
+        return res.status(200).json({message: "Successfully Logged Out"})
+
+    })
+}
+
 exports.signup = signup
 exports.login = login
 exports.verifyToken = verifyToken
 exports.getUser = getUser
 exports.refreshToken = refreshToken
+exports.logout = logout
